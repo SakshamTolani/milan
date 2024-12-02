@@ -1,6 +1,17 @@
-# MILAN -  Video Chat App 🚀
+# MILAN Video Chat App Project 🚀
 
 Welcome to MILAN! This project is a video chat application built using Django and Agora SDK. It allows users to create and join video chat rooms with ease.
+
+
+## Screenshots 📸
+
+### Lobby
+![Lobby Interface](https://res.cloudinary.com/sakshamtolani/image/upload/v1733136657/aof3jmalwvggetyheyo0.png)
+*The lobby where users can create or join rooms*
+
+### Video Call
+![Video Call Interface](https://res.cloudinary.com/sakshamtolani/image/upload/v1733136657/aof3jmalwvggetyheyo0.png)
+*Active video call session with multiple participants*
 
 ## Features ✨
 
@@ -96,20 +107,21 @@ The application will be available at `http://127.0.0.1:8000/`
    - Leave room ❌
 
 ## Project Structure 📁
+
 ```
 milan/
-├── base/ # Main Django app
-│ ├── models.py # Database models
-│ ├── views.py # View controllers
-│ ├── urls.py # URL routing
-│ └── templates/ # HTML templates
-├── static/ # Static files
-│ ├── styles/ # CSS files
-│ ├── js/ # JavaScript files
-│ └── images/ # Image assets
-├── videochatapp/ # Project settings
-├── manage.py # Django management script
-└── requirements.txt # Project dependencies
+├── base/                  # Main Django app
+│   ├── models.py         # Database models
+│   ├── views.py         # View controllers
+│   ├── urls.py          # URL routing
+│   └── templates/       # HTML templates
+├── static/               # Static files
+│   ├── styles/         # CSS files
+│   ├── js/            # JavaScript files
+│   └── images/        # Image assets
+├── videochatapp/        # Project settings
+├── manage.py           # Django management script
+└── requirements.txt    # Project dependencies
 ```
 
 ## Contributing 🤝
