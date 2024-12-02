@@ -1,0 +1,45 @@
+<!-- room.html -->
+{% extends 'base/main.html' %}
+{% load static %}
+{% block content %}
+<main>
+    <section id="room-name-wrapper">
+        <p>Room Name: <span id="room-name"></span></p>
+    </section>
+
+    <section id="video-streams"></section>
+
+    <section id="controls-wrapper">
+        <div class="icon-wrapper">
+            <img src="{% static 'images/microphone.svg' %}" class="control-icon" id="mic-btn" />
+        </div>
+
+        <div class="icon-wrapper">
+            <img src="{% static 'images/video.svg' %}" class="control-icon" id="camera-btn" />
+        </div>
+
+        <div class="icon-wrapper">
+            <img src="{% static 'images/screen-share.svg' %}" class="control-icon" id="screen-share-btn" />
+        </div>
+
+        <div class="icon-wrapper">
+            <img src="{% static 'images/link-share.svg' %}" class="control-icon" id="share-link-btn" />
+        </div>
+
+        <div id="link-display-wrapper">
+            <div class="invite-link-container">
+                <input type="text" id="invite-link" readonly placeholder="Invite link will appear here" />
+                <button id="copy-link-btn">Copy</button>
+            </div>
+        </div>
+
+        <div class="icon-wrapper">
+            <img src="{% static 'images/leave.svg' %}" class="control-icon" id="leave-btn" />
+        </div>
+
+    </section>
+</main>
+
+<script type="text/javascript" src="{% static 'assets/AgoraRTC_N-4.15.1.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/streams.js' %}"></script>
+{% endblock content %}

@@ -1,0 +1,203 @@
+<!-- lobby.html -->
+{% extends 'base/main.html' %}
+
+{% load static %}
+{% block content %}
+
+
+<main>
+    <section id="form-container">
+        <img id="logo" src="{% static 'images/chat-icon.png' %}" alt="Logo">
+        <div id="welcome-message">
+            <h1>Welcome to MILAN!</h1>
+            <p>A group video calling application just for you!</p>
+        </div>
+
+        <!-- New Tabs -->
+        <div id="room-tabs">
+            <button class="tab active" data-form="join-form">Join Room</button>
+            <button class="tab" data-form="create-form">Create Room</button>
+        </div>
+
+        <!-- Join Room Form -->
+        <form action="" id="join-form" class="form-content active">
+            <div class="form-field">
+                <input type="text" name="room" placeholder="Enter a room name..." style="text-transform:uppercase;">
+            </div>
+
+            <div class="form-field">
+                <input type="text" name="username" placeholder="Enter your name..." style="text-transform:uppercase;">
+            </div>
+
+            <div class="form-field">
+                <input type="submit" value="Join Stream">
+            </div>
+        </form>
+
+        <!-- Create Room Form -->
+        <form action="" id="create-form" class="form-content" style="display:none;">
+            <div class="form-field">
+                <input type="text" name="new-room" placeholder="Create a unique room name..."
+                    style="text-transform:uppercase;">
+            </div>
+
+            <div class="form-field">
+                <input type="text" name="username" placeholder="Enter your name..." style="text-transform:uppercase;">
+            </div>
+
+            <div class="form-field">
+                <input type="submit" value="Create Stream">
+            </div>
+        </form>
+    </section>
+
+</main>
+
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        const invitedRoom = sessionStorage.getItem('invitedRoom');
+
+        if (invitedRoom) {
+            // Switch to Join Room tab
+            const joinTab = document.querySelector('.tab[data-form="join-form"]');
+            const createTab = document.querySelector('.tab[data-form="create-form"]');
+            const joinForm = document.getElementById('join-form');
+            const createForm = document.getElementById('create-form');
+
+            joinTab.classList.add('active');
+            createTab.classList.remove('active');
+            joinForm.classList.add('active');
+            createForm.classList.remove('active');
+            joinForm.style.display = 'block';
+            createForm.style.display = 'none';
+
+            // Pre-fill room name
+            const roomInput = joinForm.querySelector('input[name="room"]');
+            roomInput.value = invitedRoom;
+            roomInput.disabled = true; // Make room name non-editable
+
+            // Add an invitation message
+            const welcomeMessage = document.getElementById('welcome-message');
+            const inviteNotice = document.createElement('p');
+            inviteNotice.textContent = `You've been invited to join room: ${invitedRoom}`;
+            inviteNotice.style.color = 'rgb(75, 93, 172)';
+            inviteNotice.style.fontWeight = 'bold';
+            welcomeMessage.appendChild(inviteNotice);
+
+            // Clean up the stored invited room
+            sessionStorage.removeItem('invitedRoom');
+        }
+    });
+
+    // Tab Switching Logic
+    const tabs = document.querySelectorAll('.tab');
+    const formContents = document.querySelectorAll('.form-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs and form contents
+            tabs.forEach(t => t.classList.remove('active'));
+            formContents.forEach(f => {
+                f.classList.remove('active');
+                f.style.display = 'none';
+            });
+
+            // Add active to clicked tab and show corresponding form
+            tab.classList.add('active');
+            const targetForm = document.getElementById(tab.dataset.form);
+            targetForm.classList.add('active');
+            targetForm.style.display = 'block';
+        });
+    });
+
+    let joinForm = document.getElementById('join-form');
+    let createForm = document.getElementById('create-form');
+
+    let handleSubmit = async (e) => {
+        e.preventDefault();
+        let room = e.target.room ? e.target.room.value.toUpperCase() : e.target['new-room'].value.toUpperCase();
+        let name = e.target.username.value;
+
+        let role = 'host'
+        let response = await fetch(`/get_token/?channel=${room}&role=${role}`);
+        let data = await response.json();
+
+        let UID = data.uid;
+        let token = data.token;
+        sessionStorage.setItem('UID', UID);
+        sessionStorage.setItem('token', token);
+        sessionStorage.setItem('room', room);
+        sessionStorage.setItem('name', name);
+        sessionStorage.setItem('role', role);
+
+        let roomData = { UID, token, room, name, role };
+        let room_token = btoa(JSON.stringify(roomData));
+
+        window.open(`/room/${room_token}/`, '_self');
+    }
+
+    let handleJoinSubmit = async (e) => {
+        e.preventDefault();
+        let room = e.target.room ? e.target.room.value.toUpperCase() : e.target['new-room'].value.toUpperCase();
+        let name = e.target.username.value;
+        try {
+            const roomCheckResponse = await fetch(`/get_room/?room_name=${room}`);
+            const roomExistsData = await roomCheckResponse.json();
+
+            if (!roomExistsData.exists) {
+                let errorElement = document.querySelector('#join-form .error-message');
+                if (!errorElement) {
+                    errorElement = document.createElement('div');
+                    errorElement.classList.add('error-message');
+                    errorElement.style.color = 'red';
+                    errorElement.style.marginTop = '10px';
+                    e.target.appendChild(errorElement);
+                }
+                errorElement.textContent = `Room "${room}" does not exist. Please create the room first.`;
+                setTimeout(() => {
+                    errorElement.textContent = '';
+                }, 5000);
+
+                return;
+            }
+            let role = 'audience'
+            let response = await fetch(`/get_token/?channel=${room}&role=${role}`);
+            let data = await response.json();
+
+            let UID = data.uid;
+            let token = data.token;
+
+            sessionStorage.setItem('UID', UID);
+            sessionStorage.setItem('token', token);
+            sessionStorage.setItem('room', room);
+            sessionStorage.setItem('name', name);
+            sessionStorage.setItem('role', role);
+
+            let roomTokenData = { UID, token, room, name, role };
+            let room_token = btoa(JSON.stringify(roomTokenData));
+
+            window.open(`/room/${room_token}/`, '_self');
+
+        } catch (error) {
+            console.error('Error checking room:', error);
+            let errorElement = document.querySelector('#join-form .error-message');
+            if (!errorElement) {
+                errorElement = document.createElement('div');
+                errorElement.classList.add('error-message');
+                errorElement.style.color = 'red';
+                errorElement.style.marginTop = '10px';
+                e.target.appendChild(errorElement);
+            }
+
+            errorElement.textContent = 'An error occurred. Please try again.';
+            setTimeout(() => {
+                errorElement.textContent = '';
+            }, 5000);
+        }
+    }
+
+    joinForm.addEventListener('submit', handleJoinSubmit);
+    createForm.addEventListener('submit', handleSubmit);
+</script>
+{% endblock content %}
