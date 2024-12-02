@@ -10,7 +10,7 @@ Welcome to MILAN! This project is a video chat application built using Django an
 *The lobby where users can create or join rooms*
 
 ### Video Call
-![Video Call Interface](https://res.cloudinary.com/sakshamtolani/image/upload/v1733136657/aof3jmalwvggetyheyo0.png)
+![Video Call Interface](https://res.cloudinary.com/sakshamtolani/image/upload/v1733136795/djmicr0f2dmk1a4aacgf.png)
 *Active video call session with multiple participants*
 
 ## Features ✨
